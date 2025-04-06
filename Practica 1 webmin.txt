@@ -1,0 +1,27 @@
+-----------------------------------------------------------------------
+			INSTALACION DE WEBMIN
+-----------------------------------------------------------------------
+
+1- DESCARGAR LAS DEPENDENCIAS Y LA HERRAMIENTA WGET:
+
+ sudo dnf install wget tar perl -y
+
+2- UTILIZANDO LA HERRAMIENTA WGET, DESCARGAR LA HERRAMIENTA WEBMIN EN TAR: 
+sudo wget https://www.webmin.com/download/webmin-current.tar.gz
+
+3- DESCOMPRIMIR EL ARCHIVO TAR: 
+tar xvf webmin-current.tar.gz
+
+4- CREAR LA CARPETA WEBMIN EN EL SIGUIENTE PATH: 
+sudo mkdir -p /usr/local/webmin
+
+5- EJECUTAR EL SCRIPT EN EL PATH INDICADO:
+ ./webmin-2.110/setup.sh /usr/local/webmin/
+
+6- ABRIR EL PUERTO 10000 UTILIZANDO EL FIREWALL 
+sudo firewall-cmd --add-port=10000/tcp --permanent
+
+7- RECARGAR EL FIREWALL: 
+sudo firewall-cmd --reload
+
+8- ABRIR EL NAVEGADOR E INGRESAR A WEBMIN

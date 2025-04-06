@@ -1,0 +1,47 @@
+Practica 5: Playbooks (1Pts)
+
+Crear un playbook para instalar la aplicacion notepad++ en la maquina ansible2 (Windows)
+Crea un playbook en la maquina ansible1 (linux) para que actualize los repositorios del sistema (apt)
+**********************************************************************
+
+1- CREAR UN ARCHIVO YAMEL:
+
+sudo vi actualizar-repo.yml
+
+- DENTRO DEL ARCHIVO, AGREGAR LO SIGUIENTE:
+
+---
+- name: Actualizar los repositorios de apt en ansible1
+  hosts: linux  # Define el host donde se ejecutará el playbook
+  become: yes  # Necesita privilegios de superusuario (sudo)
+
+  tasks:
+    - name: Actualizar la lista de repositorios de apt
+      apt:
+        update_cache: yes  # Actualiza la caché de los repositorios
+        cache_valid_time: 3600  # Mantiene la caché actualizada durante 1 hora (3600 segundos)
+
+2- EJECUTAR EL PLAYBOOK CON EL SIGUIENTE COMANDO:
+
+ansible-playbook actualizar-repo.yml
+
+3- CREAR UN ARCHIVO YAMEL QUE DESCARGUE E INSTALE NOTEPADD++:
+
+sudo vi notepadd++.yml
+
+---
+- name: Instalar Notepad++ en Windows 10
+  hosts: win  # Cambia "windows_hosts" al nombre de tu grupo de hosts o máquina
+
+  tasks:
+    - name: Descargar el instalador de Notepad++ en el escritorio
+      win_get_url:
+        url: https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.3.3/npp.8.3.3.Installer.exe
+        dest: C:\Users\ansible2\Desktop\npp.8.3.3.Installer.exe  # Ruta en el escritorio del usuario
+
+    - name: Instalar Notepad++ de forma silenciosa
+      win_command: C:\Users\ansible2\Desktop\npp.8.3.3.Installer.exe /S  # Instalar de forma silenciosa
+
+4- EJECUTAR EL PLAYBOOK:
+
+ansible-playbook notepadd++.yml

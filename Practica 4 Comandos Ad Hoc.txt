@@ -1,0 +1,15 @@
+*********************************************************************
+Practica 4: Comandos Ad-Hoc (1Pts)
+
+Utilizando el modulo win_copy utilize un comando ad-hoc que copie un archivo txt ubicado en el escritorio de la maquina ansible2 a la carpeta de documentos.
+
+Utilizando el modulo reboot utilize un comando ad-hoc que reinicie la VM ansible 1
+*********************************************************************
+
+1- Utilizando el modulo win_copy utilize un comando ad-hoc que copie un archivo txt ubicado en el escritorio de la maquina ansible2 a la carpeta de documentos.
+
+ansible win -m win_shell -a "Move-Item -Path 'C:/Users/ansible2/Desktop/archivo.txt' -Destination 'C:/Users/ansible2/Documents/'"
+
+2- Utilizando el modulo reboot utilize un comando ad-hoc que reinicie la VM ansible 1
+
+ansible Linux -m shell -b -a "reboot"

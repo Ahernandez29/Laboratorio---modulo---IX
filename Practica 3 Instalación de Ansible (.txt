@@ -1,0 +1,122 @@
+Practica 3: Instalación de Ansible (1pts)
+
+Instalar ansible en la VM-Server (que funionara como ansible controller) junto a todas sus dependencias
+Configurar ambos equipos clientes (la VM de digital ocean y la VM de windows) para que sean compatibles con el ansible controller
+Crea un usuario llamado ansible con permisos de administrador (en el caso de windows y sudoers en el caso de linux) 
+El usuario ansible puede iniciar sesión en ansible1 usando ssh, basándose en par de llaves ssh sin contraseña.
+Crear un inventario de ansible (/etc/ansible/host) y crear un grupo llamado [win] para la pc de windows y uno llamado [linux] para la VM de linux
+pruebe la conexion a ambos host utilizando el modulo ping
+
+***********************************************************************
+
+1- INSTALAR EL REPOSITORIO EPEL: 
+sudo dnf install epel-release (In case you do not have it)
+
+2- INSTALAR ANSIBLE:
+sudo dnf install ansible
+
+3- CONFIGURAR ANSIBLE HOSTS INVENTORY:
+sudo vi /etc/ansible/hosts
+
+- CREAR UN GRUPO LINUX:
+
+[linux]
+
+198.199.65.43 ansible_user=ansible1 ansible_become_pass=1234 ansible_ssh_private_key_file=~/.ssh/id_rsa ansible_port=22
+
+- CREAR GRUPO WINDOWS:
+
+[win]
+192.168.1.32
+[win:vars]
+ansible_user=ansible2
+ansible_password=1234
+ansible_port=5985
+ansible_connection=winrm
+ansible_winrm_transport=basic
+ansible_winrm_server_cert_validation=ignore
+
+----------------------------------------------------------------------
+4- CREAR USUARIOS ANSIBLE CON PERMISOS ADMIN EN DIGITALOCEAN Y EN LA MAQUINA WINDOWS
+---------------------------------------------------------------------
+
+- CREAR USUARIO EN LINUX:
+
+sudo useradd -m -s /bin/bash ansible1
+sudo passwd ansible1
+
+- MOVERLO AL GRUPO SUDOERS:
+
+sudo usermod -aG sudo ansible1
+
+- CREAR USUARIO EN WINDOWS:
+
+net user ansible2 1234 /add
+net localgroup Administrators ansible2 /add
+
+----------------------------------------------------------------------
+5- ACCEDER AL USUARIO ANSIBLE1 DESDE ANSIBLE USANDO SSH, BASANDOSE EN PAR DE LLABES SSH SIN CONTRASEÑA
+----------------------------------------------------------------------
+
+ssh ansible1@ip
+
+----------------------------------------------------------------------
+6- Configurar ambos equipos clientes (la VM de digital ocean y la VM de windows) para que sean compatibles con el ansible controller
+---------------------------------------------------------------------
+
+EN WINDOWS:
+
+- ABRIR WINDOWS DEFENDER FIREWALL
+- SELECCIONAR OPCIONES AVANZADAS O ADVANCE SETTINGS
+- CLIC EN INBOUND RULES O REGLAS DE ENTRADAS Y ACTIVAR:
+
+* file and printer sharin (Echo Request ICMPv4 - in)
+en español seria: Compartir archivos e impresoras solicitud eco ipv4
+
+* File and Printer sharing (Echo request ICMPv4 - in)
+en español seria: Compartir archivos e impresoras solicitud eco ipv4
+
+- ASEGURARSE DE QUE LA INTERFAZ DE RED DE LA MAQUINA ESTÉ EN BRIDGE Y NO EN NAT
+
+- EN EL BUSCADOR DE WINDOWS BUSCAR NETWORK STATUS O ESTADO DE LA RED Y HACER CLIC.
+
+- HACER CLIC EN PROPIEDADES Y CONFIRMAR QUE LA CASILLA QUE DICE PRIVADO ESTÉ SELECCIONADA.
+
+- ABRIR EL POWERSHELL COMO ADMINISTRADOR Y EJECUTAR LOS SIGUIENTES COMANDOS:
+
+Set-ExecutionPolicy RemoteSigned -Force
+Enable-PSRemoting -Force
+Set-Item WSMan:\localhost\Service\Auth\Basic -Value $true
+Set-Item WSMan:\localhost\Service\AllowUnencrypted -Value $true
+Restart-Service WinRM
+Install-Codule -Name PSWindowsUpdate -Force
+New-NetFirewallRule -Name "WinRM HTTP" -Protocol TCP -LocalPort 5985 -Action Allow
+New-LocalUser -Name "ansible2" -Password (ConvertTo-SecureString "1234" -AsPlainText -Force) -FullName "ansible2 user" -Description "Usuario ansible2"
+Add-LocalGroupMember -Group "Administrators" -Member "ansible2"
+winrm create winrm/config/Listener?Address=*+Transport=HTTP
+
+- COMPROBAR LA CONFIGURACION DEL SERVICIO WinRM:
+
+winrm get winrm/config/Service
+
+- PROBAR HACIENDO PING DESDE EL SERVIDOR LINUX
+ping direccion ip
+
+----------------------------------------------------------------------
+7- PROBAR LA CONEXION A AMBOS HOST UTILIZANDO EL MODULO PING
+----------------------------------------------------------------------
+
+ansible Linux -m ping
+
+ansible win -m win_ping
+
+
+
+*********************************************************************
+Practica 4: Comandos Ad-Hoc (1Pts)
+
+Utilizando el modulo win_copy utilize un comando ad-hoc que copie un archivo txt ubicado en el escritorio de la maquina ansible2 a la carpeta de documentos
+Utilizando el modulo reboot utilize un comando ad-hoc que reinicie la VM ansible 1
+**********************************************************************
+
+ansible win -m win_shell -a "Move-Item -Path 'C:/Users/ansible2/Desktop/archivo.txt' -Destination 'C:/Users/ansible2/Documents/'"
