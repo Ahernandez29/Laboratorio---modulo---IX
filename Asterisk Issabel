@@ -1,0 +1,20 @@
+asterisk
+
+1- ACTUALIZAR EL SISTEMA:
+
+sudo dnf update -y
+
+2-DESCARGAR WGET:
+
+sudo dnf install wget
+
+3-DESCARGAR EL SCRIPT:
+
+wget http://repo.issabel.org/issabel5-netinstall.sh
+
+4- DARLE PERMISOS DE EJECUCION:
+
+sudo chmod 700 
+
+5- EJECUTAR EL SCRIPT:
+./
