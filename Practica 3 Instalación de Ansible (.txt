@@ -120,3 +120,43 @@ Utilizando el modulo reboot utilize un comando ad-hoc que reinicie la VM ansible
 **********************************************************************
 
 ansible win -m win_shell -a "Move-Item -Path 'C:/Users/ansible2/Desktop/archivo.txt' -Destination 'C:/Users/ansible2/Documents/'"
+
+COMANDOS AD HOC ANSIBLE
+--------------------------------
+
+1- HACER PING A LOS NODOS REMOTOS:
+
+ansible rocky(nombre del grupo) -m ping
+
+2- MOSTRAR LA HORA DE CADA NODO:
+
+ansible rocky -m shell -a "uptime"
+
+3- INSTALAR UN PAQUETE EN SERVIDORES REMOTOS:
+
+ansible rocky -m yum -b -a "name=httpd state=present"
+
+4- COPIAR UN ARCHIVO HACIA OTRO SERVIDOR:
+
+ansible rocky -m copy -a "src=/ruta/del/archivo/carpeta a copiar dest=/ruta/donde/recibe/"
+
+5- REINICIAR UN SERVICIO:
+
+ansible rocky -m service -a "name=httpd state=restarted"
+
+6- CREAR UN NUEVO ARCHIVO EN EL SERVIDOR REMOTO:
+
+ansible rocky -m file -a "path=/home/usuario/nombre-del-archivo state=touch"
+
+7- ELIMINAR ARCHIVO EN EL SERVIDOR REMOTO:
+
+ansible rocky -m file -a "path=/home/usuario/nombre-del-archivo state=absent"
+
+8- VER EL CONTENIDO DE UN ARCHIVO DE UN NODO REMOTO:
+
+ansible rocky -m shell -a "cat /etc/os-release"
+
+9- REINICIAR LOS NODOS:
+
+ansible rocky -m command -b -a "reboot"
+
